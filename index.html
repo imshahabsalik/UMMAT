@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0f5132">
+<title>UMMAT Membership Registration</title>
+<style>
+:root{
+    --green:#0f3a51;
+    --green2:#0d3f6f;
+    --light:#090a0a;
+    --border:#080808;
+    --text:#090909;
+    --muted:#66736b;
+    --danger:#b42318;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:#eef3ef;
+    color:var(--text);
+    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+
+.container{
+    width:min(680px,100%);
+    margin:auto;
+    padding:18px 14px 32px;
+}
+
+.card{
+    background:white;
+    border-radius:18px;
+    box-shadow:0 8px 30px #163b2b14;
+    overflow:hidden;
+}
+
+/* HEADER */
+.header{
+    padding:25px 22px 20px;
+    background:linear-gradient(135deg,var(--green),#f1f2f4);
+    color:white;
+}
+
+/* UMMAT LOGO */
+.ummat-logo{
+    display:block;
+    width:600px;
+    max-width:100%;
+    height:auto;
+    margin:0 auto 4px;
+}
+
+/* TITLE */
+.brand{
+    font-size:28px;
+    font-weight:800;
+    letter-spacing:.5px;
+}
+
+.sub{
+    opacity:.9;
+    margin-top:3px;
+    font-size:13px;
+}
+
+.title{
+    margin-top:18px;
+    font-size:22px;
+    font-weight:750;
+    color:var(--text)
+}
+
+/* PROGRESS */
+.progress{
+    padding:15px 20px 5px;
+}
+
+.bar{
+    height:7px;
+    background:#e8eee9;
+    border-radius:99px;
+    overflow:hidden;
+}
+
+.fill{
+    height:100%;
+    background:var(--green2);
+    width:16.67%;
+    transition:.25s;
+}
+
+.steps{
+    display:flex;
+    justify-content:space-between;
+    color:var(--muted);
+    font-size:11px;
+    margin-top:7px;
+}
+
+/* FORM */
+.form{
+    padding:22px;
+}
+
+.step{
+    display:none;
+}
+
+.step.active{
+    display:block;
+}
+
+.step h2{
+    font-size:20px;
+    margin:0 0 5px;
+}
+
+.hint{
+    color:var(--muted);
+    font-size:13px;
+    margin:0 0 20px;
+}
+
+/* LABELS & INPUTS */
+label{
+    display:block;
+    font-size:14px;
+    font-weight:650;
+    margin:15px 0 7px;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    padding:13px 14px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    font:inherit;
+    background:#fff;
+    outline:none;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:var(--green2);
+    box-shadow:0 0 0 3px #176b4312;
+}
+
+textarea{
+    min-height:110px;
+    resize:vertical;
+}
+
+/* TWO COLUMN FIELDS */
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:0 12px;
+}
+
+/* RADIO / CHOICE */
+.choice{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.choice label{
+    margin:0;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:11px 14px;
+    font-weight:500;
+    cursor:pointer;
+    flex:1;
+}
+
+.choice input{
+    width:auto;
+}
+
+/* PHOTO */
+.photo{
+    border:2px dashed #c9d7ce;
+    border-radius:14px;
+    padding:18px;
+    text-align:center;
+    background:var(--light);
+}
+
+.photo img{
+    display:none;
+    width:110px;
+    height:110px;
+    object-fit:cover;
+    border-radius:50%;
+    margin:0 auto 12px;
+}
+
+.photo input{
+    border:0;
+    padding:0;
+    background:transparent;
+}
+
+/* BUTTONS */
+.nav{
+    display:flex;
+    gap:10px;
+    margin-top:24px;
+}
+
+.btn{
+    flex:1;
+    border:0;
+    border-radius:11px;
+    padding:14px;
+    font:inherit;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.back{
+    background:#edf2ee;
+    color:var(--text);
+}
+
+.next,
+.submit{
+    background:var(--green);
+    color:white;
+}
+
+.btn:disabled{
+    opacity:.55;
+    cursor:not-allowed;
+}
+
+/* ERROR */
+.error{
+    color:var(--danger);
+    font-size:12px;
+    margin-top:5px;
+}
+
+/* REVIEW */
+.review{
+    background:var(--light);
+    border-radius:12px;
+    padding:14px;
+}
+
+.row{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    padding:9px 0;
+    border-bottom:1px solid #dfe8e2;
+    font-size:13px;
+}
+
+.row:last-child{
+    border:0;
+}
+
+.row b{
+    font-weight:650;
+}
+
+/* SUCCESS */
+.success{
+    text-align:center;
+    padding:35px 10px;
+}
+
+.check{
+    font-size:48px;
+}
+
+.appno{
+    font-size:24px;
+    font-weight:800;
+    color:var(--green);
+    margin:10px 0;
+}
+
+.small{
+    font-size:12px;
+    color:var(--muted);
+    line-height:1.5;
+}
+
+/* MOBILE */
+@media(max-width:520px){
+
+    .container{
+        padding:0;
+    }
+
+    .card{
+        border-radius:0;
+        min-height:100vh;
+    }
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .header{
+        padding:20px 18px 22px;
+    }
+
+    .ummat-logo{
+        width:310px;
+        max-width:100%;
+        margin:0 auto 5px;
+    }
+
+    .form{
+        padding:20px 17px;
+    }
+
+    .title{
+        font-size:21px;
+    }
+}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="card">
+<header class="header">
+
+    <img 
+        class="ummat-logo" 
+        src="ummat-logo.png" 
+        alt="Ummat Foundation logo"
+    >
+
+    <div class="title">
+        Membership Registration
+    </div>
+
+</header>
+<div class="progress"><div class="bar"><div class="fill" id="fill"></div></div><div class="steps"><span>Basic</span><span>Personal</span><span>Business</span><span>Address</span><span>Contact</span><span>Review</span></div></div>
+
+<form class="form" id="form">
+<section class="step active" data-step="1">
+<h2>Let's start</h2><p class="hint">Enter your basic information.</p>
+<label for="name">Full Name *</label><input id="name" name="name" autocomplete="name" required>
+<label>Membership Type *</label><div class="choice"><label><input type="radio" name="memberType" value="Manufacturer" required> Manufacturer</label><label><input type="radio" name="memberType" value="Trader"> Trader</label></div>
+<div class="nav"><button type="button" class="btn next" onclick="next()">Continue →</button></div>
+</section>
+
+<section class="step" data-step="2">
+<h2>Personal details</h2><p class="hint">Tell us a little about yourself.</p>
+<div class="grid"><div><label for="dob">Date of Birth</label><input id="dob" name="dob" type="date"></div><div><label for="gender">Gender</label><select id="gender" name="gender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></div></div>
+<label for="father">Father's Name</label><input id="father" name="father" autocomplete="off">
+<div class="nav"><button type="button" class="btn back" onclick="back()">← Back</button><button type="button" class="btn next" onclick="next()">Continue →</button></div>
+</section>
+
+<section class="step" data-step="3">
+<h2>Business details</h2><p class="hint">Tell us about your business.</p>
+<label for="firm">Firm / Shop Name *</label><input id="firm" name="firm" required>
+<div class="grid"><div><label for="occupation">Occupation</label><input id="occupation" name="occupation"></div><div><label for="since">Business Since</label><input id="since" name="since" type="number" min="1900" max="2100" inputmode="numeric"></div></div>
+<label for="employees">Number of Employees</label><input id="employees" name="employees" type="number" min="0" inputmode="numeric">
+<label for="description">Business Description</label><textarea id="description" name="description" placeholder="Briefly describe your business..."></textarea>
+<div class="nav"><button type="button" class="btn back" onclick="back()">← Back</button><button type="button" class="btn next" onclick="next()">Continue →</button></div>
+</section>
+
+<section class="step" data-step="4">
+<h2>Address</h2><p class="hint">Where is your business located?</p>
+<label for="address">Business Address *</label><textarea id="address" name="address" required></textarea>
+<div class="grid"><div><label for="city">City *</label><input id="city" name="city" required autocomplete="address-level2"></div><div><label for="state">State *</label><input id="state" name="state" required autocomplete="address-level1"></div></div>
+<div class="grid"><div><label for="country">Country</label><input id="country" name="country" value="India"></div><div><label for="pin">PIN Code</label><input id="pin" name="pin" inputmode="numeric" maxlength="6"></div></div>
+<label for="permanent">Permanent Address</label><textarea id="permanent" name="permanent"></textarea>
+<div class="nav"><button type="button" class="btn back" onclick="back()">← Back</button><button type="button" class="btn next" onclick="next()">Continue →</button></div>
+</section>
+
+<section class="step" data-step="5">
+<h2>Contact & photo</h2><p class="hint">We'll use these details for membership communication.</p>
+<label for="mobile">Mobile Number *</label><input id="mobile" name="mobile" type="tel" inputmode="tel" autocomplete="tel" required placeholder="10-digit mobile number">
+<label for="email">Email Address</label><input id="email" name="email" type="email" autocomplete="email">
+<label for="website">Website (optional)</label><input id="website" name="website" type="url" placeholder="https://">
+<label>Applicant Photo</label><div class="photo"><img id="preview"><input id="photo" name="photo" type="file" accept="image/*" capture="user"><div class="small">Choose a photo from your phone or camera.</div></div>
+<div class="nav"><button type="button" class="btn back" onclick="back()">← Back</button><button type="button" class="btn next" onclick="next()">Review →</button></div>
+</section>
+
+<section class="step" data-step="6">
+<h2>Review application</h2><p class="hint">Check your details before submitting.</p><div class="review" id="review"></div>
+<div class="nav"><button type="button" class="btn back" onclick="back()">← Edit</button><button type="submit" class="btn submit" id="submitBtn">Submit Application</button></div>
+<p class="small" style="margin-top:12px;text-align:center">By submitting, you confirm that the information provided is accurate.</p>
+</section>
+
+<section class="step" data-step="7">
+<div class="success"><div class="check">✓</div><h2>Application Submitted</h2><p>Your UMMAT membership application has been received.</p><div class="appno" id="appNo"></div><p class="small">Please save your application number for future reference.</p></div>
+</section>
+</form>
+</div></div>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyl1vBHBpk1bJiMZbRa1UOKjKAYkwjuGuvqmr4yV1nYeeE1JGCaKyvr-9I4EjyaSrNmQA/exec"; // Paste your Google Apps Script Web App URL here.
+let step=1;
+const form=document.getElementById('form'), steps=[...document.querySelectorAll('.step')], fill=document.getElementById('fill');
+function show(n){steps.forEach((s,i)=>s.classList.toggle('active',i===n-1)); fill.style.width=(n===7?100:(n/6)*100)+'%'; step=n; window.scrollTo({top:0,behavior:'smooth'});}
+function validateCurrent(){const section=steps[step-1]; let ok=true; section.querySelectorAll('input,select,textarea').forEach(el=>{if(!el.checkValidity()){el.reportValidity();ok=false}}); if(step===5){const m=document.getElementById('mobile');if(!/^\d{10}$/.test(m.value.replace(/\D/g,''))){m.setCustomValidity('Enter a valid 10-digit mobile number');m.reportValidity();m.setCustomValidity('');ok=false}} return ok}
+function next(){if(validateCurrent()){if(step===5)buildReview();show(step+1)}}
+function back(){show(step-1)}
+function val(name){const el=form.elements[name]; if(!el)return ''; if(el.type==='radio'){return [...form.querySelectorAll(`[name="${name}"]:checked`)].map(x=>x.value)[0]||''} return el.value||''}
+function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function buildReview(){const fields=[['Name','name'],['Type','memberType'],['Date of Birth','dob'],['Gender','gender'],["Father's Name",'father'],['Firm / Shop','firm'],['Occupation','occupation'],['Business Since','since'],['Employees','employees'],['City','city'],['State','state'],['Mobile','mobile'],['Email','email']];document.getElementById('review').innerHTML=fields.map(([a,b])=>`<div class="row"><b>${a}</b><span>${esc(val(b))||'—'}</span></div>`).join('')}
+document.getElementById('photo').addEventListener('change',e=>{const f=e.target.files[0],img=document.getElementById('preview');if(f){img.src=URL.createObjectURL(f);img.style.display='block'}});
+
+form.addEventListener('submit',async e=>{
+e.preventDefault(); if(!validateCurrent())return;
+const btn=document.getElementById('submitBtn');btn.disabled=true;btn.textContent='Submitting...';
+const data=Object.fromEntries(new FormData(form).entries()); delete data.photo;
+data.submittedAt=new Date().toISOString();
+data.applicationNo='UMMAT-'+new Date().getFullYear()+'-'+String(Date.now()).slice(-6);
+try{
+ if(SCRIPT_URL){await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})}
+ else {localStorage.setItem('ummat_last_application',JSON.stringify(data));}
+ document.getElementById('appNo').textContent=data.applicationNo; show(7);
+}catch(err){alert('Submission could not be completed. Please check your internet connection and try again.');btn.disabled=false;btn.textContent='Submit Application'}
+});
+</script>
+</body>
+</html>
