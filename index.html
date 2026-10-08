@@ -386,12 +386,37 @@ textarea{
 </section>
 
 <section class="step" data-step="5">
-<h2>Contact & photo</h2><p class="hint">We'll use these details for membership communication.</p>
-<label for="mobile">Mobile Number *</label><input id="mobile" name="mobile" type="tel" inputmode="tel" autocomplete="tel" required placeholder="10-digit mobile number">
-<label for="email">Email Address</label><input id="email" name="email" type="email" autocomplete="email">
-<label for="website">Website (optional)</label><input id="website" name="website" type="url" placeholder="https://">
-<label>Applicant Photo</label><div class="photo"><img id="preview"><input id="photo" name="photo" type="file" accept="image/*" capture="user"><div class="small">Choose a photo from your phone or camera.</div></div>
-<div class="nav"><button type="button" class="btn back" onclick="back()">← Back</button><button type="button" class="btn next" onclick="next()">Review →</button></div>
+    <h2>Contact Information</h2>
+
+    <label>Mobile Number</label>
+    <input
+        id="mobile"
+        name="mobile"
+        type="tel"
+        inputmode="numeric"
+        maxlength="10"
+        pattern="[0-9]{10}"
+        required
+    >
+
+    <label>Email</label>
+    <input
+        id="email"
+        name="email"
+        type="email"
+    >
+
+    <label>Website</label>
+    <input
+        id="website"
+        name="website"
+        type="url"
+    >
+
+    <div class="actions">
+        <button type="button" class="btn back" onclick="back()">← Back</button>
+        <button type="button" class="btn next" onclick="next()">Review →</button>
+    </div>
 </section>
 
 <section class="step" data-step="6">
@@ -411,20 +436,19 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyl1vBHBpk1bJiMZbRa1
 let step=1;
 const form=document.getElementById('form'), steps=[...document.querySelectorAll('.step')], fill=document.getElementById('fill');
 function show(n){steps.forEach((s,i)=>s.classList.toggle('active',i===n-1)); fill.style.width=(n===7?100:(n/6)*100)+'%'; step=n; window.scrollTo({top:0,behavior:'smooth'});}
-function validateCurrent(){const section=steps[step-1]; let ok=true; section.querySelectorAll('input,select,textarea').forEach(el=>{if(!el.checkValidity()){el.reportValidity();ok=false}}); if(step===5){const m=document.getElementById('mobile');if(!/^\d{10}$/.test(m.value.replace(/\D/g,''))){m.setCustomValidity('Enter a valid 10-digit mobile number');m.reportValidity();m.setCustomValidity('');ok=false}} return ok}
-function next(){if(validateCurrent()){if(step===5)buildReview();show(step+1)}}
+function validateCurrent(){const section=steps[step-1];let ok=true;section.querySelectorAll('input,select,textarea').forEach(el=>{if(!el.checkValidity()){el.reportValidity();ok=false}});if(step===5){const m=document.getElementById('mobile');if(!/^\d{10}$/.test(m.value.replace(/\D/g,''))){m.setCustomValidity('Enter a valid 10-digit mobile number');m.reportValidity();m.setCustomValidity('');ok=false}}return ok}function next(){if(validateCurrent()){if(step===5)buildReview();show(step+1)}}
 function back(){show(step-1)}
 function val(name){const el=form.elements[name]; if(!el)return ''; if(el.type==='radio'){return [...form.querySelectorAll(`[name="${name}"]:checked`)].map(x=>x.value)[0]||''} return el.value||''}
 function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function buildReview(){const fields=[['Name','name'],['Type','memberType'],['Date of Birth','dob'],['Gender','gender'],["Father's Name",'father'],['Firm / Shop','firm'],['Occupation','occupation'],['Business Since','since'],['Employees','employees'],['City','city'],['State','state'],['Mobile','mobile'],['Email','email']];document.getElementById('review').innerHTML=fields.map(([a,b])=>`<div class="row"><b>${a}</b><span>${esc(val(b))||'—'}</span></div>`).join('')}
-document.getElementById('photo').addEventListener('change',e=>{const f=e.target.files[0],img=document.getElementById('preview');if(f){img.src=URL.createObjectURL(f);img.style.display='block'}});
+
 
 form.addEventListener('submit',async e=>{
 e.preventDefault(); if(!validateCurrent())return;
 const btn=document.getElementById('submitBtn');btn.disabled=true;btn.textContent='Submitting...';
-const data=Object.fromEntries(new FormData(form).entries()); delete data.photo;
+const data=Object.fromEntries(new FormData(form).entries());
 data.submittedAt=new Date().toISOString();
-data.applicationNo='UMMAT-'+new Date().getFullYear()+'-'+String(Date.now()).slice(-6);
+data.applicationNo='UMMAT-'+new Date().getFullYear()+'-3001');
 try{
  if(SCRIPT_URL){await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)})}
  else {localStorage.setItem('ummat_last_application',JSON.stringify(data));}
