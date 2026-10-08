@@ -549,39 +549,33 @@ form.addEventListener('submit',async e=>{
     btn.textContent='Submitting...';
 
     const data=Object.fromEntries(new FormData(form).entries());
-
     data.submittedAt=new Date().toISOString();
-
-    const data=Object.fromEntries(new FormData(form).entries());
-    data.submittedAt=new Date().toISOString();
-
+    
     try{
-        if(SCRIPT_URL){
-            await fetch(SCRIPT_URL,{
-                method:'POST',
-                mode:'no-cors',
-                headers:{
-                    'Content-Type':'text/plain;charset=utf-8'
-                },
-                body:JSON.stringify(data)
-            });
-        }else{
-            localStorage.setItem(
-                'ummat_last_application',
-                JSON.stringify(data)
-            );
+        const response=await fetch(SCRIPT_URL,{
+            method:'POST',
+            headers:{
+                'Content-Type':'text/plain;charset=utf-8'
+            },
+            body:JSON.stringify(data)
+        });
+    
+        const result=await response.json();
+    
+        if(!result.success){
+            throw new Error(result.error || 'Submission failed');
         }
-
-        document.getElementById('appNo').textContent=data.applicationNo;
-
+    
+        document.getElementById('appNo').textContent=result.applicationNo;
+    
         show(7);
-
+    
     }catch(err){
         alert('Submission could not be completed. Please check your internet connection and try again.');
-
+    
         btn.disabled=false;
         btn.textContent='Submit Application';
-    }
+}
 });
 </script>
 </body>
