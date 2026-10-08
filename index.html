@@ -432,28 +432,156 @@ textarea{
 </div></div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyl1vBHBpk1bJiMZbRa1UOKjKAYkwjuGuvqmr4yV1nYeeE1JGCaKyvr-9I4EjyaSrNmQA/exec"; // Paste your Google Apps Script Web App URL here.
-let step=1;
-const form=document.getElementById('form'), steps=[...document.querySelectorAll('.step')], fill=document.getElementById('fill');
-function show(n){steps.forEach((s,i)=>s.classList.toggle('active',i===n-1)); fill.style.width=(n===7?100:(n/6)*100)+'%'; step=n; window.scrollTo({top:0,behavior:'smooth'});}
-function validateCurrent(){const section=steps[step-1];let ok=true;section.querySelectorAll('input,select,textarea').forEach(el=>{if(!el.checkValidity()){el.reportValidity();ok=false}});if(step===5){const m=document.getElementById('mobile');if(!/^\d{10}$/.test(m.value.replace(/\D/g,''))){m.setCustomValidity('Enter a valid 10-digit mobile number');m.reportValidity();m.setCustomValidity('');ok=false}}return ok}function next(){if(validateCurrent()){if(step===5)buildReview();show(step+1)}}
-function back(){show(step-1)}
-function val(name){const el=form.elements[name]; if(!el)return ''; if(el.type==='radio'){return [...form.querySelectorAll(`[name="${name}"]:checked`)].map(x=>x.value)[0]||''} return el.value||''}
-function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-function buildReview(){const fields=[['Name','name'],['Type','memberType'],['Date of Birth','dob'],['Gender','gender'],["Father's Name",'father'],['Firm / Shop','firm'],['Occupation','occupation'],['Business Since','since'],['Employees','employees'],['City','city'],['State','state'],['Mobile','mobile'],['Email','email']];document.getElementById('review').innerHTML=fields.map(([a,b])=>`<div class="row"><b>${a}</b><span>${esc(val(b))||'—'}</span></div>`).join('')}
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyl1vBHBpk1bJiMZbRa1UOKjKAYkwjuGuvqmr4yV1nYeeE1JGCaKyvr-9I4EjyaSrNmQA/exec";
 
+let step=1;
+
+const form=document.getElementById('form'),
+steps=[...document.querySelectorAll('.step')],
+fill=document.getElementById('fill');
+
+function show(n){
+    steps.forEach((s,i)=>s.classList.toggle('active',i===n-1));
+    fill.style.width=(n===7?100:(n/6)*100)+'%';
+    step=n;
+    window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function validateCurrent(){
+    const section=steps[step-1];
+    let ok=true;
+
+    section.querySelectorAll('input,select,textarea').forEach(el=>{
+        if(!el.checkValidity()){
+            el.reportValidity();
+            ok=false;
+        }
+    });
+
+    if(step===5){
+        const m=document.getElementById('mobile');
+
+        if(!/^\d{10}$/.test(m.value.replace(/\D/g,''))){
+            m.setCustomValidity('Enter a valid 10-digit mobile number');
+            m.reportValidity();
+            m.setCustomValidity('');
+            ok=false;
+        }
+    }
+
+    return ok;
+}
+
+function next(){
+    if(validateCurrent()){
+        if(step===5)buildReview();
+        show(step+1);
+    }
+}
+
+function back(){
+    show(step-1);
+}
+
+function val(name){
+    const el=form.elements[name];
+
+    if(!el)return '';
+
+    if(el.type==='radio'){
+        return [...form.querySelectorAll(`[name="${name}"]:checked`)]
+        .map(x=>x.value)[0]||'';
+    }
+
+    return el.value||'';
+}
+
+function esc(s){
+    return String(s||'').replace(
+        /[&<>"']/g,
+        m=>({
+            '&':'&amp;',
+            '<':'&lt;',
+            '>':'&gt;',
+            '"':'&quot;',
+            "'":'&#039;'
+        }[m])
+    );
+}
+
+function buildReview(){
+    const fields=[
+        ['Name','name'],
+        ['Type','memberType'],
+        ['Date of Birth','dob'],
+        ['Gender','gender'],
+        ["Father's Name",'father'],
+        ['Firm / Shop','firm'],
+        ['Occupation','occupation'],
+        ['Business Since','since'],
+        ['Employees','employees'],
+        ['Business Description','description'],
+        ['Business Address','address'],
+        ['City','city'],
+        ['State','state'],
+        ['Country','country'],
+        ['PIN Code','pin'],
+        ['Permanent Address','permanent'],
+        ['Mobile','mobile'],
+        ['Email','email'],
+        ['Website','website']
+    ];
+
+    document.getElementById('review').innerHTML=
+        fields.map(([a,b])=>
+            `<div class="row"><b>${a}</b><span>${esc(val(b))||'—'}</span></div>`
+        ).join('');
+}
 
 form.addEventListener('submit',async e=>{
-e.preventDefault(); if(!validateCurrent())return;
-const btn=document.getElementById('submitBtn');btn.disabled=true;btn.textContent='Submitting...';
-const data=Object.fromEntries(new FormData(form).entries());
-data.submittedAt=new Date().toISOString();
-data.applicationNo='UMMAT-'+new Date().getFullYear()+'-3001');
-try{
- if(SCRIPT_URL){await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)})}
- else {localStorage.setItem('ummat_last_application',JSON.stringify(data));}
- document.getElementById('appNo').textContent=data.applicationNo; show(7);
-}catch(err){alert('Submission could not be completed. Please check your internet connection and try again.');btn.disabled=false;btn.textContent='Submit Application'}
+    e.preventDefault();
+
+    if(!validateCurrent())return;
+
+    const btn=document.getElementById('submitBtn');
+
+    btn.disabled=true;
+    btn.textContent='Submitting...';
+
+    const data=Object.fromEntries(new FormData(form).entries());
+
+    data.submittedAt=new Date().toISOString();
+
+    const data=Object.fromEntries(new FormData(form).entries());
+    data.submittedAt=new Date().toISOString();
+
+    try{
+        if(SCRIPT_URL){
+            await fetch(SCRIPT_URL,{
+                method:'POST',
+                mode:'no-cors',
+                headers:{
+                    'Content-Type':'text/plain;charset=utf-8'
+                },
+                body:JSON.stringify(data)
+            });
+        }else{
+            localStorage.setItem(
+                'ummat_last_application',
+                JSON.stringify(data)
+            );
+        }
+
+        document.getElementById('appNo').textContent=data.applicationNo;
+
+        show(7);
+
+    }catch(err){
+        alert('Submission could not be completed. Please check your internet connection and try again.');
+
+        btn.disabled=false;
+        btn.textContent='Submit Application';
+    }
 });
 </script>
 </body>
