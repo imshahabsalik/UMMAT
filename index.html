@@ -535,16 +535,18 @@ steps=[...document.querySelectorAll('.step')],
 fill=document.getElementById('fill');
 
 
+
 function show(n) {
     steps.forEach((s, i) => {
         s.classList.toggle('active', i === n - 1);
     });
 
-    fill.style.width = (n / 5 * 100) + '%';
-    step = n;
+    fill.style.width = (n >= 5 ? 100 : (n / 5) * 100) + '%';
 
+    step = n;
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
 
 
 function validateCurrent(){
@@ -558,7 +560,7 @@ function validateCurrent(){
         }
     });
 
-    if(step===5){
+    if(step===4){
         const m=document.getElementById('mobile');
 
         if(!/^\d{10}$/.test(m.value.replace(/\D/g,''))){
