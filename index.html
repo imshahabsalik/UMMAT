@@ -654,15 +654,24 @@ form.addEventListener('submit',async e=>{
             body:JSON.stringify(data)
         });
     
-        const result=await response.json();
+        
+    const result = await response.json();
     
-        if(!result.success){
-            throw new Error(result.error || 'Submission failed');
-        }
+    console.log("Application response:", result);
     
-        document.getElementById('appNo').textContent=result.applicationNo;
+    if (!result.success) {
+        throw new Error(result.error || "Submission failed");
+    }
     
-        show(7);
+    const applicationNo = result.applicationNo;
+    
+    if (!applicationNo) {
+        throw new Error("Application was saved, but no application number was returned.");
+    }
+    
+    document.getElementById("appNo").textContent = applicationNo;
+    show(7);
+
     
     }catch(err){
         alert('Submission could not be completed. Please check your internet connection and try again.');
