@@ -534,12 +534,18 @@ const form=document.getElementById('form'),
 steps=[...document.querySelectorAll('.step')],
 fill=document.getElementById('fill');
 
-function show(n){
-    steps.forEach((s,i)=>s.classList.toggle('active',i===n-1));
-    fill.style.width=(n===6?100:(n/5)*100)+'%';
-    step=n;
-    window.scrollTo({top:0,behavior:'smooth'});
+
+function show(n) {
+    steps.forEach((s, i) => {
+        s.classList.toggle('active', i === n - 1);
+    });
+
+    fill.style.width = (n / 5 * 100) + '%';
+    step = n;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
 
 function validateCurrent(){
     const section=steps[step-1];
