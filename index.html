@@ -41,20 +41,98 @@ body{
 }
 
 /* HEADER */
-.header{
-    padding:25px 22px 20px;
-    background:linear-gradient(135deg,var(--green),#f1f2f4);
-    color:white;
+
+.header {
+    padding: 20px;
+    background: linear-gradient(135deg, #0f3a51, #e9efec);
+    color: white;
 }
 
-/* UMMAT LOGO */
-.ummat-logo{
-    display:block;
-    width:600px;
-    max-width:100%;
-    height:auto;
-    margin:0 auto 4px;
+.header .title {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.4);
+    font-size: 21px;
+    font-weight: 750;
+    color: white;
 }
+
+
+/* UMMAT LOGO */
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 16px;
+    background: linear-gradient(135deg, #ffffff, #eaf1ed);
+    border: 1px solid #d6e2da;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+}
+
+.ummat-logo {
+    display: block;
+    width: 100px;
+    max-width: 28%;
+    height: auto;
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.logo-slogan {
+    text-align: left;
+    min-width: 0;
+}
+
+.slogan-title {
+    font-size: clamp(17px, 3vw, 23px);
+    font-weight: 800;
+    line-height: 1.2;
+    color: #0f3a51;
+    letter-spacing: 0.2px;
+}
+
+.slogan-en {
+    font-size: 12px;
+    font-weight: 700;
+    color: #17231d;
+    line-height: 1.5;
+    margin-top: 5px;
+}
+
+.slogan-hi {
+    font-size: 13px;
+    font-weight: 700;
+    color: #17231d;
+    line-height: 1.6;
+    margin-top: 3px;
+    padding-top: 4px;
+    border-top: 2px solid #d6ad58;
+}
+
+@media (max-width: 520px) {
+    .logo-container {
+        gap: 9px;
+        padding: 12px 9px;
+        border-radius: 10px;
+    }
+
+    .ummat-logo {
+        width: 76px;
+        max-width: 25%;
+    }
+
+    .slogan-en {
+        font-size: 10px;
+    }
+
+    .slogan-hi {
+        font-size: 11px;
+    }
+}
+
 
 /* TITLE */
 .brand{
@@ -165,6 +243,13 @@ textarea{
     grid-template-columns:1fr 1fr;
     gap:0 12px;
 }
+.card {
+    background: white;
+    border: 5px solid #000;
+    border-radius: 18px;
+    box-shadow: 0 8px 30px #163b2b14;
+    overflow: hidden;
+}
 
 /* RADIO / CHOICE */
 .choice{
@@ -186,7 +271,16 @@ textarea{
 .choice input{
     width:auto;
 }
-
+#address {
+    min-height: 50px;
+    height: 50px;
+    resize: vertical;
+}
+#permanent {
+    min-height: 50px;
+    height: 50px;
+    resize: vertical;
+}
 /* PHOTO */
 .photo{
     border:2px dashed #c9d7ce;
@@ -320,7 +414,7 @@ textarea{
 
     .ummat-logo{
         width:310px;
-        max-width:100%;
+        max-width:10%;
         margin:0 auto 5px;
     }
 
@@ -338,36 +432,37 @@ textarea{
 <div class="container">
 <div class="card">
 <header class="header">
-
-    <img 
-        class="ummat-logo" 
-        src="ummat-logo.jpeg" 
-        alt="Ummat Foundation logo"
-    >
-
+    <div class="logo-container">
+        <img 
+            class="ummat-logo" 
+            src="ummat-logo.png" 
+            alt="Ummat Foundation logo"
+        >
+        <div class="logo-slogan">
+            <div class="slogan-title">Ummat Foundation</div>
+            <div class="slogan-en">Congregation for Peace & Humanity</div>
+            <div class="slogan-hi">शांति और मानवता के लिए एकजुट समुदाय</div>
+        </div>
+    </div>
     <div class="title">
         Membership Registration Form
     </div>
 
 </header>
-<div class="progress"><div class="bar"><div class="fill" id="fill"></div></div><div class="steps"><span>Basic</span><span>Personal</span><span>Business</span><span>Address</span><span>Contact</span><span>Review</span></div></div>
+<div class="progress"><div class="bar"><div class="fill" id="fill"></div></div><div class="steps"><span>Personal</span><span>Business</span><span>Address</span><span>Contact</span><span>Review</span></div></div>
 
 <form class="form" id="form">
 <section class="step active" data-step="1">
-<h2>Let's start</h2><p class="hint">Enter your basic information.</p>
+<h2>Personal Details</h2><p class="hint">Enter your personal information.</p>
 <label for="name">Full Name *</label><input id="name" name="name" autocomplete="name" required>
-<label>Membership Type *</label><div class="choice"><label><input type="radio" name="memberType" value="Manufacturer" required> Manufacturer</label><label><input type="radio" name="memberType" value="Trader"> Trader</label><label><input type="radio" name="memberType" value="Other"> Other</label></div><div class="nav"><button type="button" class="btn next" onclick="next()">Continue →</button></div>
+<div class="grid"><div><label for="dob">Date of Birth</label><input id="dob" name="dob" type="date"></div><div><label for="gender">Gender</label><select id="gender" name="gender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></div></div>
+<label for="father">Father's Name</label><input id="father" name="father" autocomplete="off">
+<div class="nav"><button type="button" class="btn next" onclick="next()">Continue →</button></div>
 </section>
 
 <section class="step" data-step="2">
-<h2>Personal details</h2><p class="hint">Tell us a little about yourself.</p>
-<div class="grid"><div><label for="dob">Date of Birth</label><input id="dob" name="dob" type="date"></div><div><label for="gender">Gender</label><select id="gender" name="gender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></div></div>
-<label for="father">Father's Name</label><input id="father" name="father" autocomplete="off">
-<div class="nav"><button type="button" class="btn back" onclick="back()">← Back</button><button type="button" class="btn next" onclick="next()">Continue →</button></div>
-</section>
-
-<section class="step" data-step="3">
 <h2>Business details</h2><p class="hint">Tell us about your business.</p>
+<label>Membership Type *</label><div class="choice"><label><input type="radio" name="memberType" value="Manufacturer" required> Manufacturer</label><label><input type="radio" name="memberType" value="Trader"> Trader</label><label><input type="radio" name="memberType" value="Other"> Other</label></div>
 <label for="firm">Firm / Shop Name *</label><input id="firm" name="firm" required>
 <div class="grid"><div><label for="occupation">Occupation</label><input id="occupation" name="occupation"></div><div><label for="since">Business Since</label><input id="since" name="since" type="number" min="1900" max="2100" inputmode="numeric"></div></div>
 <label for="employees">Number of Employees</label><input id="employees" name="employees" type="number" min="0" inputmode="numeric">
@@ -375,7 +470,7 @@ textarea{
 <div class="nav"><button type="button" class="btn back" onclick="back()">← Back</button><button type="button" class="btn next" onclick="next()">Continue →</button></div>
 </section>
 
-<section class="step" data-step="4">
+<section class="step" data-step="3">
 <h2>Address</h2><p class="hint">Where is your business located?</p>
 <label for="address">Business Address *</label><textarea id="address" name="address" required></textarea>
 <div class="grid"><div><label for="city">City *</label><input id="city" name="city" required autocomplete="address-level2"></div><div><label for="state">State *</label><input id="state" name="state" required autocomplete="address-level1"></div></div>
@@ -384,7 +479,7 @@ textarea{
 <div class="nav"><button type="button" class="btn back" onclick="back()">← Back</button><button type="button" class="btn next" onclick="next()">Continue →</button></div>
 </section>
 
-<section class="step" data-step="5">
+<section class="step" data-step="4">
     <h2>Contact Information</h2>
 
     <label>Mobile Number</label>
@@ -418,13 +513,13 @@ textarea{
     </div>
 </section>
 
-<section class="step" data-step="6">
+<section class="step" data-step="5">
 <h2>Review application</h2><p class="hint">Check your details before submitting.</p><div class="review" id="review"></div>
 <div class="nav"><button type="button" class="btn back" onclick="back()">← Edit</button><button type="submit" class="btn submit" id="submitBtn">Submit Application</button></div>
 <p class="small" style="margin-top:12px;text-align:center">By submitting, you confirm that the information provided is accurate.</p>
 </section>
 
-<section class="step" data-step="7">
+<section class="step" data-step="6">
 <div class="success"><div class="check">✓</div><h2>Application Submitted</h2><p>Your UMMAT membership application has been received.</p><div class="appno" id="appNo"></div><p class="small">Please save your application number for future reference.</p></div>
 </section>
 </form>
@@ -441,7 +536,7 @@ fill=document.getElementById('fill');
 
 function show(n){
     steps.forEach((s,i)=>s.classList.toggle('active',i===n-1));
-    fill.style.width=(n===7?100:(n/6)*100)+'%';
+    fill.style.width=(n===6?100:(n/5)*100)+'%';
     step=n;
     window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -473,7 +568,7 @@ function validateCurrent(){
 
 function next(){
     if(validateCurrent()){
-        if(step===5)buildReview();
+        if(step===4)buildReview();
         show(step+1);
     }
 }
