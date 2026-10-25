@@ -25,6 +25,12 @@ form.nav-search{margin:auto}
 .category-grid .cat span{font-size:28px;display:block}
 .category-grid .cat b{display:block;font-size:14px;margin-top:10px}
 .category-grid .cat:hover,.category-grid .cat.active{border-color:#335cff;background:#f2f5ff}
+.category-more{margin-top:14px}
+.category-more summary{display:inline-block;cursor:pointer;list-style:none;border:1px solid #d8dee8;border-radius:9px;padding:10px 14px;color:#172033;background:#fff;font-weight:700}
+.category-more summary::-webkit-details-marker{display:none}
+.category-more summary::after{content:" +";color:#335cff}
+.category-more[open] summary::after{content:" −"}
+.category-grid-more{margin-top:14px}
 .section-head .link{font-size:14px}
 
 /* product cards with real photos */

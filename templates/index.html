@@ -26,11 +26,23 @@
 
 <section class="categories" id="categories">
   <div class="section-head"><h2>Browse categories</h2>{% if filtered %}<a href="/" class="link">Clear filters ✕</a>{% endif %}</div>
+  {% set primary_categories = CATEGORIES[:5] %}
+  {% set remaining_categories = CATEGORIES[5:]|reject('equalto', 'Other')|list %}
   <div class="category-grid">
-    {% for c in CATEGORIES if c != 'Other' %}
+    {% for c in primary_categories %}
     <a href="/?category={{ c|urlencode }}{% if q %}&q={{ q|urlencode }}{% endif %}#marketplace" class="cat {{ 'active' if c == category }}"><span>{{ CATEGORY_ICONS[c] }}</span><b>{{ c }}</b></a>
     {% endfor %}
   </div>
+  {% if remaining_categories %}
+  <details class="category-more" {% if category in remaining_categories %}open{% endif %}>
+    <summary>More categories ({{ remaining_categories|length }})</summary>
+    <div class="category-grid category-grid-more">
+      {% for c in remaining_categories %}
+      <a href="/?category={{ c|urlencode }}{% if q %}&q={{ q|urlencode }}{% endif %}#marketplace" class="cat {{ 'active' if c == category }}"><span>{{ CATEGORY_ICONS[c] }}</span><b>{{ c }}</b></a>
+      {% endfor %}
+    </div>
+  </details>
+  {% endif %}
 </section>
 
 <section class="marketplace" id="marketplace">
