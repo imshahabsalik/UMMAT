@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>About UMMAT Foundation</title><link rel="stylesheet" href="/static/style.css">
+  <style>
+    :root{--blue:#0875c9;--deep-blue:#07529a;--red:#a80f1a;--pale:#edf7ff;--ink:#172b45}
+    body.about-body{margin:0;background:#eaf6ff;color:#17202c;font-family:Arial,Helvetica,sans-serif}
+    .about-nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px max(18px,calc((100% - 1120px)/2));background:white;border-bottom:1px solid #d7e9f7;position:sticky;top:0;z-index:5}
+    .about-nav a{color:#07529a;text-decoration:none;font-weight:700}.about-nav .back{border:1px solid #0875c9;border-radius:7px;padding:9px 14px}
+    .brochure{max-width:980px;margin:22px auto 34px;background:white;box-shadow:0 8px 30px #174d7620;overflow:hidden;position:relative}
+    .brochure:before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,#dff1ff80,transparent 58%);pointer-events:none}
+    .brochure-page{position:relative;padding:0 5.2% 28px;background:linear-gradient(180deg,#f8fcff 0%,#fff 16%,#fff 90%,#f1faff 100%);overflow:hidden}
+    .brochure-page:after{content:"";position:absolute;bottom:0;left:0;right:0;height:19px;background:linear-gradient(180deg,#38a4ec,#0878ca 55%,#064f9a);clip-path:polygon(0 0,24% 45%,57% 10%,100% 0,100% 100%,0 100%);pointer-events:none}
+    .masthead{height:auto;width:100%;display:block;max-width:520px;object-fit:contain;margin:0 auto 4px}
+    .section-title{display:flex;align-items:center;justify-content:center;gap:12px;margin:12px 0 10px;color:#fff;font-weight:800;font-size:clamp(17px,2.2vw,25px);text-align:center}
+    .section-title span{background:linear-gradient(#b51620,#910d16);border-radius:18px;padding:6px 30px;min-width:150px;box-shadow:0 1px 0 #e8a4a4}
+    .section-title:before,.section-title:after{content:"";height:2px;flex:1;max-width:100px;background:#b44b4b}
+    .vision-copy{text-align:center;font-size:clamp(13px,1.45vw,16px);line-height:1.42;margin:10px auto;max-width:850px}
+    .quote{width:fit-content;max-width:90%;margin:12px auto;background:linear-gradient(#1479c8,#064e9c);color:#fff;border-radius:12px;padding:7px 22px;text-align:center;font:bold clamp(16px,2vw,23px) Georgia,serif}
+    .mission-list{list-style:none;margin:12px 0 14px;padding:0;counter-reset:mission}
+    .mission-list li{counter-increment:mission;position:relative;margin:4px 0;padding:7px 12px 7px 50px;border-radius:13px;background:linear-gradient(90deg,#e7f4ff,#f4faff);font-size:clamp(12px,1.32vw,15px);line-height:1.3}
+    .mission-list li:before{content:counter(mission);position:absolute;left:0;top:50%;transform:translateY(-50%);height:28px;width:28px;border-radius:50%;background:#0869b6;color:white;display:grid;place-items:center;font-weight:bold}
+    .blue-banner{background:linear-gradient(#1679c7,#07509a);color:white;border-radius:12px;text-align:center;font:bold clamp(17px,2vw,24px) Georgia,serif;padding:8px 16px;margin:12px auto 8px;width:fit-content;max-width:90%}
+    .content-panel{background:linear-gradient(100deg,#edf8ff,#f7fcff);border-radius:12px;padding:15px 17px;margin:8px 0 15px;font-size:clamp(13px,1.4vw,15.5px);line-height:1.48}
+    .content-panel p{margin:0 0 10px}.content-panel p:last-child{margin-bottom:0}
+    .page-break{height:12px;background:#dceffc;border-top:1px solid #c6e5fa;border-bottom:1px solid #c6e5fa}
+    .page-two{padding-bottom:36px}
+    @media(max-width:650px){.about-nav{padding:10px 14px}.brochure{margin:0 auto 18px;box-shadow:none}.brochure-page{padding-left:4%;padding-right:4%}.masthead{max-width:100%}.mission-list li{padding-left:40px}.mission-list li:before{width:25px;height:25px}.content-panel{padding:12px}}
+  </style>
+</head>
+<body class="about-body">
+<header class="about-nav"><a href="/">UMMAT</a><a href="/" class="back">← Back to Home</a></header>
+<main class="brochure" aria-label="About UMMAT Foundation brochure">
+  <section class="brochure-page page-one">
+    <img class="masthead" src="/static/ummat-logo-header.png" alt="Ummat Foundation — Congregation for Peace and Humanity">
+    <div class="section-title"><span>VISION</span></div>
+    <p class="vision-copy">UMMAT Foundation is a platform for all manufacturers and traders, through which they can know each other and eliminate the differences between them, where they can strongly and genuinely help each other and society at large. UMMAT Foundation aims to help the needy, poor and deprived people and to make them stand strongly and independently.</p>
+    <div class="quote">‘If awakened, we are alive’</div>
+    <p class="vision-copy">The one thing to keep in mind is that the biggest strength we have within us is to invite and welcome others to join our hands for the betterment of society; and nobody can take this from us. To help those who are in dark and bring them in light is ordered by our Lord.</p>
+    <p class="vision-copy">Our main motto is to invite and unite the Ummat (people). We want to step into your ideology and make you attentive and alert that will lead to the construction of a better society, a better nation and a better world. UMMAT Foundation is an important parameter in changing the world.</p>
+    <div class="quote">‘United, we advance’</div>
+    <div class="section-title"><span>MISSIONS</span></div>
+    <ol class="mission-list">
+      <li>To combine all the large and small-scale manufacturers and traders from all over the world and to make them know and help each other on a common platform.</li>
+      <li>To shorten the distance between manufacturers and traders and to increase trade and business.</li>
+      <li>To make the manufacturers and traders aware of new technologies and trends so that they may use them.</li>
+      <li>To work for the benefits and progress of the country by linking UMMAT with all the unions/federations/associations of the nation and the world.</li>
+      <li>To make the fellow members aware about the schemes and policies of state and central Government.</li>
+      <li>To increase the livelihood for women by establishing small scale industries or business units under cooperative society sector through UMMAT.</li>
+      <li>To increase the trade and business at national and international level.</li>
+      <li>To work for the Employment Exchange for the youth and provide them suitable training &amp; internships.</li>
+      <li>To establish committees at district and state level and thus bring an efficient coordination and harmony in different aspects of work.</li>
+      <li>To make proper utilization of collected charity, donations and zakaat.</li>
+      <li>To advertize and popularize the idea and vision of UMMAT through social media and other platforms.</li>
+      <li>To prepare an offline and online digital directory of UMMAT like ‘The Yellow Pages’.</li>
+      <li>To lend help to every section and aspect of society and to initiate and regularly inspect important tasks for the betterment of the nation.</li>
+    </ol>
+  </section>
+  <div class="page-break" aria-hidden="true"></div>
+  <section class="brochure-page page-two">
+    <div class="blue-banner">‘Stronger Together’</div>
+    <div class="section-title"><span>INTRODUCTION</span></div>
+    <div class="content-panel">UMMAT is an idea, which we have made with full dedication, concern and mutual consent for the harmony and peace in the world. We felt its need as there has never been created such platform to combine manufacturers and traders together. There are separate federations and unions of each class and sectors but the task of linking small scale and big scale manufacturers and traders has never been done in the past. Through UMMAT, we have put a small step forward that will only be made successful by you. The works done by UMMAT, will be worthwhile. Linking each and every manufacturer and trader is a pride in itself. By joining UMMAT, you too will get all that which you have been looking for. It has a balance of ‘Deen and Dunia’, works that will provide you with relief when done. When you come along with UMMAT, each and every task, thought, thing, time will be dedicated to combine people and then progress. Remember, perfection needs dedication. Anyone can join UMMAT. UMMAT will provide you with strength, goals and a platform and in turn you will have to make your own efforts.</div>
+    <div class="section-title"><span>GOAL</span></div>
+    <div class="content-panel">
+      <p>To combine Ummat (people), through UMMAT Foundation.</p>
+      <p>A cooperative society will be made under the banner of UMMAT in which Unani medicines will be made. The network for the same will be constructed by the members of UMMAT, who will be the agents, distributors and C&amp;F. The medicines will be prepared under the guidance of good doctors. The earned dividend, thereof, will be given to the women and their families in need, to provide them financial aid and stability. The youth who have done B.Tech, MBA, polytechnic, and other technical courses and are worried for their training, will be given the same in registered companies and will be paid for the services done by them.</p>
+    </div>
+    <div class="section-title"><span>SUMMARY</span></div>
+    <div class="content-panel">
+      <p>UMMAT starts with the very first letter of Arabic language. Similarly, it's our very first trial to link the Ummat, the people, together. In English, it starts with the alphabet ‘U’ that can embrace everything in it. Concentrating and pondering over the word ‘UMMAT’ a being even in the remotest corner of the other part of the world will be linked to you by this word and you can therefore feel his/her happiness or pain. It is natural to have doubts regarding the failure, obstacles and uncertainty for the upcoming success, but it doesn't mean that we should remain inactive by fearing the former ones. If your past was not good, does not mean that you future will not be good too. We want to bring about a BIG change and that will need a SMALL step first.</p>
+      <p>Confucius, a Chinese philosopher, said that a small step is necessary first of thousand mile long tour. Come along and join UMMAT, tell people about UMMAT and make them join too. Link your dreams with UMMAT and fulfill them for the sake of the people of the world.</p>
+    </div>
+  </section>
+</main>
+<footer style="text-align:center;padding:18px;color:#315a7a">UMMAT Foundation · Congregation for Peace &amp; Humanity</footer>
+</body></html>

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>UMMAT — B2B Marketplace</title>
+  <meta name="description" content="UMMAT: a B2B marketplace where manufacturers, wholesalers and traders list products and buyers send wholesale enquiries.">
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/extra.css">
+</head>
+<body>
+<header class="nav nav-home">
+  <h1 class="header-welcome">UMMAT Foundation welcomes you</h1>
+  <form class="nav-search" action="/" method="get" role="search">
+    <input name="q" value="{{ q }}" placeholder="Search products, suppliers or categories" aria-label="Search" maxlength="100">
+    {% if category %}<input type="hidden" name="category" value="{{ category }}">{% endif %}
+    <button type="submit">Search</button>
+  </form>
+  <div class="nav-links"><a href="/about" class="primary">About Us</a><a href="/login" class="outline">Supplier login</a><a href="/create-store" class="outline">Create My Store</a></div>
+</header>
+
+<main>
+<section class="cover-front" aria-label="UMMAT Foundation cover">
+  <img src="/static/ummat-cover.png" alt="UMMAT Foundation cover" class="cover-front-image">
+</section>
+
+<section class="categories" id="categories">
+  <div class="section-head"><h2>Browse categories</h2>{% if filtered %}<a href="/" class="link">Clear filters ✕</a>{% endif %}</div>
+  <div class="category-grid">
+    {% for c in CATEGORIES if c != 'Other' %}
+    <a href="/?category={{ c|urlencode }}{% if q %}&q={{ q|urlencode }}{% endif %}#marketplace" class="cat {{ 'active' if c == category }}"><span>{{ CATEGORY_ICONS[c] }}</span><b>{{ c }}</b></a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="marketplace" id="marketplace">
+  <div class="section-head"><div>
+    <h2>{% if filtered %}Search results{% else %}Products from suppliers{% endif %}</h2>
+    <p>{% if filtered %}{{ product_total }} product{{ '' if product_total == 1 else 's' }}{% if q %} for “{{ q }}”{% endif %}{% if category %} in {{ category }}{% endif %}{% if product_total > products|length %} (showing first {{ products|length }}){% endif %}{% else %}Wholesale products listed by UMMAT suppliers, with MOQ.{% endif %}</p>
+  </div></div>
+  <div class="product-grid">
+    {% for p in products %}
+    <article class="product">
+      <a class="product-img" href="/store/{{ p.store_slug }}">
+        {% if p.image %}<img src="{{ url_for('static', filename=p.image) }}" alt="{{ p.name }}" loading="lazy">{% else %}<span>No photo</span>{% endif %}
+      </a>
+      <h3>{{ p.name }}</h3>
+      <p class="muted">{{ p.category }} · MOQ {{ p|moq_text }}</p>
+      <p class="muted small">by <a href="/store/{{ p.store_slug }}">{{ p.store_name }}</a>{% if p.location %} · {{ p.location }}{% endif %}</p>
+      <strong>{{ p|price_text }}</strong>
+      <button type="button" class="quote-btn" data-store="{{ p.store_slug }}" data-product="{{ p.index }}" data-product-name="{{ p.name }}" data-label="{{ p.name }} — {{ p.store_name }}">Request Quote</button>
+    </article>
+    {% else %}
+    <div class="empty">
+      {% if filtered %}No products match your search. <a href="/">Clear filters</a> or try a different word.
+      {% elif has_any_products %}No products to show.
+      {% else %}No products have been listed yet. <a href="/create-store">Be the first supplier to list yours →</a>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="supplier-cta">
+  <div><span class="eyebrow">FOR SUPPLIERS</span><h2>Your products deserve a digital store.</h2><p>Enter your products with photos, prices and minimum order quantities. UMMAT gives you a storefront page that business buyers can open and send enquiries to.</p></div>
+  <a href="/create-store" class="primary">Create My UMMAT Store →</a>
+</section>
+
+<section class="stores" id="stores">
+  <div class="section-head"><h2>Supplier stores</h2></div>
+  <div class="store-grid">
+    {% for s in stores %}
+    <a class="store-card" href="/store/{{ s.slug }}">
+      {% if s.logo %}<img class="avatar store-card-logo" src="{{ url_for('static', filename=s.logo) }}" alt="{{ s.business_name }} logo" loading="lazy">{% else %}<div class="avatar">{{ s.business_name[0]|upper }}</div>{% endif %}<div><h3>{{ s.business_name }}</h3><p>{{ s.category }} · {{ s.location }}</p><span>{{ s.products|length }} product{{ '' if s.products|length == 1 else 's' }} · View store →</span></div>
+    </a>
+    {% else %}
+    <div class="empty">{% if filtered %}No suppliers match your search.{% else %}Supplier stores created on UMMAT will appear here.{% endif %}</div>
+    {% endfor %}
+  </div>
+</section>
+</main>
+
+<footer>UMMAT · A simpler digital storefront for small suppliers.</footer>
+{% include '_quote_modal.html' %}
+<script src="/static/quote.js"></script>
+</body>
+</html>

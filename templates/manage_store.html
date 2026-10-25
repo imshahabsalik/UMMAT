@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Edit Store — UMMAT</title>
+  <link rel="stylesheet" href="/static/style.css"><link rel="stylesheet" href="/static/extra.css">
+</head>
+<body>
+<header class="nav"><a class="brand" href="/">UMMAT</a><a class="outline" href="/dashboard">Dashboard</a></header>
+<main class="form-page wide">
+  <div class="form-intro"><span class="eyebrow">STORE SETTINGS</span><h1>Edit business details</h1><p>Your public store link will stay the same.</p></div>
+  <form class="store-form" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+    {% for error in errors %}<div class="alert error" role="alert">{{ error }}</div>{% endfor %}
+    <label>Personal name <em>*</em><input name="personal_name" value="{{ request.form.get('personal_name', store.personal_name or '') }}" required maxlength="100" autocomplete="name"></label>
+    <label>Business name <em>*</em><input name="business_name" value="{{ request.form.get('business_name', store.business_name) }}" required maxlength="120"></label>
+    <label>Business category <em>*</em><select name="category" required>{% for c in CATEGORIES %}<option value="{{ c }}" {{ 'selected' if request.form.get('category', store.category) == c }}>{{ c }}</option>{% endfor %}</select></label>
+    <label>Business location <em>*</em><input name="location" value="{{ request.form.get('location', store.location) }}" required maxlength="120"></label>
+    <label>About your business <small>Optional</small><textarea name="description" rows="4" maxlength="1000">{{ request.form.get('description', store.description or '') }}</textarea></label>
+    <label>Phone / WhatsApp <small>Optional</small><input name="phone" value="{{ request.form.get('phone', store.phone or '') }}" inputmode="tel" maxlength="20"></label>
+    {% if store.logo %}<p class="muted">Current store logo:</p><img class="store-logo-preview" src="{{ url_for('static', filename=store.logo) }}" alt="{{ store.business_name }} logo"><label class="check-label"><input type="checkbox" name="remove_logo" value="1"> Remove current logo</label>{% endif %}
+    <label>Store logo <small>Optional · JPG, PNG or WebP · max 5 MB{% if store.logo %}; upload a new image to replace the current logo{% endif %}</small><input type="file" name="store_logo" accept="image/jpeg,image/png,image/webp"></label>
+    <button class="primary full" type="submit">Save business details</button>
+  </form>
+  <section class="delete-store-section" aria-labelledby="delete-store-title">
+    <h2 id="delete-store-title">Delete this store</h2>
+    <p>This permanently removes the public store, its products, and its enquiries. This action cannot be undone.</p>
+    <form method="post" action="{{ url_for('delete_store') }}" onsubmit="return confirm('Permanently delete this store, all its products, and enquiries? This cannot be undone.')">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+      <button class="danger-button" type="submit">Delete store permanently</button>
+    </form>
+  </section>
+</main>
+</body></html>

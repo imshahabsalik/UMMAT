@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Enquiries — UMMAT admin</title>
+<meta name="robots" content="noindex"><link rel="stylesheet" href="/static/style.css"><link rel="stylesheet" href="/static/extra.css"></head>
+<body><header class="nav"><a class="brand" href="/">UMMAT</a></header>
+<main class="store-page"><h1>Buyer enquiries ({{ items|length }})</h1>
+<div class="table-wrap"><table class="enq"><thead><tr><th>Received (UTC)</th><th>Store</th><th>Product</th><th>Buyer</th><th>Contact</th><th>Qty</th><th>Message</th></tr></thead><tbody>
+{% for e in items %}<tr><td>{{ e.created_at }}</td><td>{{ e.store_name }}</td><td>{{ e.product_name or e.product or '—' }}</td><td>{{ e.buyer_name }}</td><td>{{ e.contact }}</td><td>{{ e.quantity or '—' }}</td><td>{{ e.message or '—' }}</td></tr>
+{% else %}<tr><td colspan="7" class="empty">No enquiries yet.</td></tr>{% endfor %}
+</tbody></table></div></main></body></html>

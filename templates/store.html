@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{{ supplier.business_name }} — UMMAT</title>
+<meta name="description" content="{{ supplier.business_name }} — {{ supplier.category }} supplier in {{ supplier.location }} on UMMAT.">
+<link rel="stylesheet" href="/static/style.css"><link rel="stylesheet" href="/static/extra.css"></head>
+<body>
+<header class="nav"><a class="brand" href="/">UMMAT</a><div class="nav-links"><a href="/" class="outline">← Marketplace</a><a href="/create-store" class="outline">Create a Store</a></div></header>
+<main class="store-page">
+{% if created %}<div class="alert success" role="status"><strong>Your store is live!</strong> Share this page’s link with your buyers: <code id="shareLink"></code></div>{% endif %}
+<section class="store-hero">
+  {% if supplier.logo %}<img class="avatar big store-brand-logo" src="{{ url_for('static', filename=supplier.logo) }}" alt="{{ supplier.business_name }} logo">{% else %}<div class="avatar big">{{ supplier.business_name[0]|upper }}</div>{% endif %}
+  <div><h1>{{ supplier.business_name }}</h1><p>{{ supplier.personal_name or 'Supplier' }} · {{ supplier.category }} · 📍 {{ supplier.location }}</p>
+    {% if supplier.description %}<p class="store-desc">{{ supplier.description }}</p>{% endif %}</div>
+  <div class="hero-actions">
+    <button type="button" class="primary quote-btn" data-store="{{ supplier.slug }}" data-label="{{ supplier.business_name }} — general enquiry">Request Bulk Quote</button>
+    {% if supplier.phone %}<a class="outline" href="https://wa.me/{{ supplier.phone }}" target="_blank" rel="noopener">Chat on WhatsApp</a>{% endif %}
+  </div>
+</section>
+<section>
+  <div class="section-head"><div><h2>Products</h2><p>{{ supplier.products|length }} product{{ '' if supplier.products|length == 1 else 's' }} listed</p></div>
+    <input class="mini-search" id="storeSearch" placeholder="Search this store" aria-label="Search this store"></div>
+  <div class="product-grid" id="storeProducts">
+  {% for p in supplier.products %}
+  <article class="product" data-text="{{ (p.name ~ ' ' ~ (p.description or ''))|lower }}">
+    <div class="product-img">{% if p.image %}<img src="{{ url_for('static', filename=p.image) }}" alt="{{ p.name }}" loading="lazy">{% else %}<span>No photo</span>{% endif %}</div>
+    <h3>{{ p.name }}</h3>
+    <p class="muted">{{ p.category }} · MOQ {{ p|moq_text }}</p>
+    <strong>{{ p|price_text }}</strong>
+    {% if p.description %}<p class="desc">{{ p.description }}</p>{% endif %}
+    <button type="button" class="quote-btn" data-store="{{ supplier.slug }}" data-product="{{ loop.index0 }}" data-product-name="{{ p.name }}" data-label="{{ p.name }} — {{ supplier.business_name }}">Request Quote</button>
+  </article>
+  {% endfor %}
+  </div>
+  <p id="noMatch" class="empty" hidden>No products in this store match your search.</p>
+</section>
+</main>
+<footer>Powered by UMMAT</footer>
+{% include '_quote_modal.html' %}
+<script src="/static/quote.js"></script>
+<script>
+const link=document.getElementById('shareLink'); if(link) link.textContent=location.origin+location.pathname;
+const box=document.getElementById('storeSearch'), cards=[...document.querySelectorAll('#storeProducts .product')], none=document.getElementById('noMatch');
+box.addEventListener('input',()=>{const t=box.value.trim().toLowerCase().split(/\s+/).filter(Boolean);let n=0;cards.forEach(c=>{const ok=t.every(w=>c.dataset.text.includes(w));c.hidden=!ok;if(ok)n++;});none.hidden=n>0;});
+</script>
+</body></html>

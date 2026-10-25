@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.env
+ummat.sqlite3
+ummat.sqlite3-shm
+ummat.sqlite3-wal
+*.sqlite3.*.bak
+*.pre-sqlite.bak
+stores.json
+enquiries.json
+static/uploads/*
+tests/.runtime/
+backups/

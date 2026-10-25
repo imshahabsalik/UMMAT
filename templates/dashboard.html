@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>My Store — UMMAT</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/extra.css">
+</head>
+<body>
+<header class="nav">
+  <a class="brand" href="/">UMMAT</a>
+  <a class="outline" href="/store/{{ store.slug }}">View public store</a>
+  <form action="/logout" method="post"><input type="hidden" name="_csrf_token" value="{{ csrf_token() }}"><button class="outline" type="submit">Log out</button></form>
+</header>
+<main class="form-page wide">
+  <div class="form-intro">
+    <span class="eyebrow">SUPPLIER DASHBOARD</span>
+    {% if store.logo %}<img class="store-logo-preview" src="{{ url_for('static', filename=store.logo) }}" alt="{{ store.business_name }} logo">{% endif %}
+    <h1>{{ store.business_name }}</h1>
+    <p>{{ store.category }} · {{ store.location }}</p>
+    <a class="primary" href="/manage-store">Edit business details</a>
+  </div>
+  <section>
+    <h2>Your products ({{ store.products|length }})</h2>
+    <p><a class="primary" href="/manage-products/add">+ Add product</a></p>
+    {% for product in store.products %}
+      <article class="product-row">
+        <h3>{{ product.name }}</h3>
+        <p>{{ product|price_text }} · MOQ {{ product|moq_text }}</p>
+        {% if product.image %}
+          <img src="{{ url_for('static', filename=product.image) }}" alt="{{ product.name }}" style="max-width:140px;max-height:120px">
+        {% endif %}
+        <p><a class="outline" href="/manage-products/{{ product.id or loop.index0 }}/edit">Edit</a></p>
+        <form method="post" action="/manage-products/{{ product.id or loop.index0 }}/delete" onsubmit="return confirm('Delete this product?')">
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+          <button type="submit">Delete product</button>
+        </form>
+      </article>
+    {% else %}
+      <p>You haven't added any products yet.</p>
+    {% endfor %}
+  </section>
+  <section>
+    <h2>Buyer enquiries ({{ enquiries|length }})</h2>
+    {% for enquiry in enquiries %}
+      <article class="product-row"><h3>{{ enquiry.buyer_name }}{% if enquiry.product_name or enquiry.product %} · {{ enquiry.product_name or enquiry.product }}{% endif %}</h3>
+        <p><a href="mailto:{{ enquiry.contact }}">{{ enquiry.contact }}</a> · {{ enquiry.created_at }}</p>
+        {% if enquiry.quantity %}<p>Quantity: {{ enquiry.quantity }}</p>{% endif %}
+        <p>{{ enquiry.message or 'No message provided.' }}</p></article>
+    {% else %}<p>No buyer enquiries yet.</p>{% endfor %}
+  </section>
+</main>
+</body>
+</html>

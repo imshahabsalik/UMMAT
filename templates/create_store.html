@@ -1,0 +1,93 @@
+{% macro product_row(i, r, errs) %}
+<fieldset class="product-row{{ ' has-error' if errs }}">
+  <div class="row-head">
+    <legend>Product <span class="row-no">{{ i + 1 }}</span></legend>
+    <button type="button" class="link remove-row">Remove</button>
+  </div>
+  {% for e in errs %}<div class="alert error">{{ e }}</div>{% endfor %}
+  <label>Product name <em>*</em>
+    <input name="product_name" value="{{ r.name }}" maxlength="160" required placeholder="e.g. 1 Inch PVC Pipe">
+  </label>
+  <div class="two-col">
+    <label>Price (₹) <small>Leave blank to show “Contact for price”</small>
+      <input name="product_price" value="{{ r.price }}" inputmode="decimal" maxlength="20" placeholder="e.g. 120">
+    </label>
+    <label>Price is per
+      <select name="product_unit">{% for u in UNITS %}<option value="{{ u }}" {{ 'selected' if r.unit == u }}>{{ u }}</option>{% endfor %}</select>
+    </label>
+  </div>
+  <label>Minimum order quantity (MOQ) <em>*</em>
+    <input name="product_moq" value="{{ r.moq }}" inputmode="numeric" maxlength="10" required placeholder="e.g. 50">
+  </label>
+  <label>Product photo <small>Optional · JPG, PNG or WebP · max 5 MB</small>
+    <input type="file" name="product_image" accept="image/jpeg,image/png,image/webp" class="photo-input">
+  </label>
+  <img class="photo-preview" alt="" hidden>
+  <label>Description <small>Optional</small>
+    <textarea name="product_description" rows="2" maxlength="1000" placeholder="Material, size, brand, packing…">{{ r.description }}</textarea>
+  </label>
+</fieldset>
+{% endmacro %}
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Create Store — UMMAT</title>
+<link rel="stylesheet" href="/static/style.css"><link rel="stylesheet" href="/static/extra.css"></head>
+<body><header class="nav"><a class="brand" href="/">UMMAT</a><a href="/" class="outline">← Marketplace</a></header>
+<main class="form-page wide">
+<div class="form-intro"><span class="eyebrow">CREATE YOUR STORE</span><h1>Turn your business into an online store.</h1>
+<p>Tell us about your business, then add your products one by one. Everything you enter is shown exactly as you type it.</p>
+<div class="steps"><span>01 Business</span><span>02 Products</span><span>03 Publish</span></div></div>
+
+{% if errors or row_errors %}
+<div class="alert error" role="alert"><strong>Your store was not created yet.</strong> Please fix the following:
+  <ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}{% if row_errors %}<li>{{ row_errors|length }} product{{ ' has' if row_errors|length == 1 else 's have' }} a problem — see the highlighted product{{ '' if row_errors|length == 1 else 's' }} below.</li>{% endif %}</ul>
+  <p class="small">Your text is kept, but browsers cannot keep chosen images — please select them again.</p>
+</div>
+{% endif %}
+
+<form id="storeForm" class="store-form" method="post" enctype="multipart/form-data" novalidate>
+  <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+  <h2>1. Business information</h2>
+  <label>Personal name <em>*</em><input name="personal_name" value="{{ form.get('personal_name','') }}" required maxlength="100" autocomplete="name" placeholder="Your full name"></label>
+  <label>Business name <em>*</em><input name="business_name" value="{{ form.get('business_name','') }}" required maxlength="120" placeholder="e.g. Sharma Hardware"></label>
+  <label>Business category <em>*</em>
+    <select name="category" required>
+      <option value="">Choose a category…</option>
+      {% for c in CATEGORIES %}<option value="{{ c }}" {{ 'selected' if form.get('category') == c }}>{{ c }}</option>{% endfor %}
+    </select></label>
+  <label>Business location <em>*</em><input name="location" value="{{ form.get('location','') }}" required maxlength="120" placeholder="e.g. Hapur, Uttar Pradesh"></label>
+  <label>About your business <small>Optional</small><textarea name="description" rows="3" maxlength="1000" placeholder="What you make or trade, years in business, delivery areas…">{{ form.get('description','') }}</textarea></label>
+  <label>Phone / WhatsApp <small>Optional · shows a “Chat on WhatsApp” button on your store</small><input name="phone" value="{{ form.get('phone','') }}" inputmode="tel" maxlength="20" placeholder="e.g. 9876543210"></label>
+  <label>Store logo <small>Optional · JPG, PNG or WebP · max 5 MB</small>
+    <input type="file" name="store_logo" accept="image/jpeg,image/png,image/webp">
+  </label>
+
+  <h2>Account information</h2>
+  <label>Email address <em>*</em>
+    <input type="email" name="account_email" required maxlength="254" autocomplete="email" placeholder="you@example.com" value="{{ form.get('account_email', '') }}">
+  </label>
+  <label>Create password <em>*</em>
+    <input type="password" name="account_password" required minlength="12" maxlength="128" autocomplete="new-password" placeholder="At least 12 characters">
+    <small>Use a unique password that you do not use on other websites.</small>
+  </label>
+  <label>Retype password <em>*</em>
+    <input type="password" name="account_password_confirm" required minlength="12" maxlength="128" autocomplete="new-password" placeholder="Retype your password">
+  </label>
+
+  <h2>2. Products</h2>
+  <p class="muted">Add each product yourself. Name and minimum order quantity are required; photo and description are optional.</p>
+  <div id="productRows">
+    {% for r in rows %}{{ product_row(loop.index0, r, row_errors.get(loop.index0, [])) }}{% endfor %}
+  </div>
+  <p id="limitNote" class="muted small" hidden>You can add up to {{ max_products }} products at a time. More can be added later.</p>
+  <button type="button" id="addProduct" class="outline full">+ Add Another Product</button>
+
+  <h2>3. Publish</h2>
+  <button type="submit" id="submitBtn" class="primary full">Create My Store →</button>
+  <div id="clientError" class="alert error" role="alert" hidden></div>
+</form>
+</main>
+
+<template id="productTemplate">{{ product_row(0, {'name':'','price':'','unit':'piece','moq':'','description':''}, []) }}</template>
+<script>window.MAX_PRODUCTS = {{ max_products }};</script>
+<script src="/static/create_store.js"></script>
+</body></html>

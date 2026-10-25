@@ -1,0 +1,20 @@
+<dialog id="quoteDialog" class="quote-dialog" aria-labelledby="quoteTitle">
+  <form id="quoteForm" novalidate>
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+    <h2 id="quoteTitle">Request a quote</h2>
+    <p id="quoteFor" class="muted"></p>
+    <input type="hidden" name="store_slug" id="q_store">
+    <input type="hidden" name="product_index" id="q_product">
+    <label>Product name <input name="product_name" id="q_product_name" value="" maxlength="160" placeholder="Enter the product you need"><span class="field-error" data-for="product_name"></span></label>
+    <input type="text" name="website" id="q_website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <label>Your name<input name="buyer_name" maxlength="100" required autocomplete="name"><span class="field-error" data-for="buyer_name"></span></label>
+    <label>Phone or email<input name="contact" maxlength="120" required autocomplete="tel"><span class="field-error" data-for="contact"></span></label>
+    <label>Quantity needed <small>(optional)</small><input name="quantity" maxlength="60" placeholder="e.g. 200 pieces"><span class="field-error" data-for="quantity"></span></label>
+    <label>Message <small>(optional)</small><textarea name="message" rows="3" maxlength="1000" placeholder="Size, delivery city, any special requirement…"></textarea><span class="field-error" data-for="message"></span></label>
+    <div id="quoteStatus" class="alert" role="status" hidden></div>
+    <div class="dialog-actions">
+      <button type="button" class="outline" id="quoteCancel">Close</button>
+      <button type="submit" class="primary" id="quoteSend">Send enquiry</button>
+    </div>
+  </form>
+</dialog>
