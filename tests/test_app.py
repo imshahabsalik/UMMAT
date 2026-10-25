@@ -1,5 +1,8 @@
 import os
+import struct
+import time
 import unittest
+import zlib
 from io import BytesIO
 from pathlib import Path
 
@@ -82,7 +85,7 @@ class AppFlowTests(unittest.TestCase):
         self.assertIsNone(error)
         self.assertEqual(ext, "png")
         with Image.open(BytesIO(data)) as output:
-            self.assertLessEqual(max(output.size), 1600)
+            self.assertEqual(output.size, (1600, 1067))
         response = self.register("logos@example.com")
         self.assertEqual(response.status_code, 302)
         # Attach a decoded supplier logo to exercise the public display path.
@@ -103,9 +106,43 @@ class AppFlowTests(unittest.TestCase):
         self.assertEqual(dashboard.status_code, 200)
         self.assertIn(b"Need a quote", dashboard.data)
 
+    def test_large_image_is_resized_promptly(self):
+        source = BytesIO()
+        Image.new("RGB", (4800, 3200), "#356789").save(source, format="JPEG", quality=88)
+        upload = type("Upload", (), {"filename": "large.jpg", "stream": BytesIO(source.getvalue())})()
+        started = time.perf_counter()
+        data, ext, error = site.read_image(upload)
+        elapsed = time.perf_counter() - started
+        self.assertIsNone(error)
+        self.assertEqual(ext, "jpg")
+        self.assertLess(elapsed, 8.0, f"Image processing took {elapsed:.2f}s")
+        with Image.open(BytesIO(data)) as output:
+            self.assertEqual(output.size, (1600, 1067))
+
+    def test_transparent_png_keeps_alpha(self):
+        source = BytesIO()
+        Image.new("RGBA", (64, 48), (20, 80, 140, 96)).save(source, format="PNG")
+        upload = type("Upload", (), {"filename": "transparent.png", "stream": BytesIO(source.getvalue())})()
+        data, ext, error = site.read_image(upload)
+        self.assertIsNone(error)
+        self.assertEqual(ext, "png")
+        with Image.open(BytesIO(data)) as output:
+            self.assertEqual(output.mode, "RGBA")
+            self.assertEqual(output.getpixel((0, 0))[3], 96)
+
+    def test_image_over_pixel_limit_is_rejected_before_decode(self):
+        png = bytearray(self.make_png())
+        png[16:24] = struct.pack(">II", 10_000, 5_000)
+        png[29:33] = struct.pack(">I", zlib.crc32(png[12:29]) & 0xffffffff)
+        upload = type("Upload", (), {"filename": "huge.png", "stream": BytesIO(png)})()
+        data, ext, error = site.read_image(upload)
+        self.assertIsNone(data)
+        self.assertIsNone(ext)
+        self.assertIn("under 40 megapixels", error)
+
     def test_bad_image_and_csrf_are_rejected(self):
         bad = type("Upload", (), {"filename": "fake.png", "stream": BytesIO(b"not an image")})()
-        self.assertIsNotNone(site.read_image(bad)[2])
+        self.assertIn("valid JPG, PNG or WebP", site.read_image(bad)[2])
         valid = self.make_png()
         exact_limit = valid + bytes([0]) * (site.MAX_IMAGE_BYTES - len(valid))
         accepted = type("Upload", (), {"filename": "five-mb.png", "stream": BytesIO(exact_limit)})()

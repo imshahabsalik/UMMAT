@@ -22,7 +22,7 @@ from email.message import EmailMessage
 from email.utils import formataddr
 from io import BytesIO
 
-from PIL import Image, ImageOps, UnidentifiedImageError
+from PIL import Image, ImageOps
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from flask import (Flask, abort, jsonify, redirect, render_template,
@@ -60,6 +60,8 @@ UPLOAD_DIR = os.path.join(BASE_DIR, "static", "uploads")
 
 MAX_PRODUCTS = 20
 MAX_IMAGE_BYTES = 5 * 1024 * 1024            # 5 MB per product photo or store logo
+MAX_IMAGE_DIMENSION = 1600                    # bound stored images for marketplace display
+MAX_IMAGE_PIXELS = 40_000_000                 # reject decompression bombs before decoding
 MAX_REQUEST_BYTES = 110 * 1024 * 1024        # up to 20 product photos plus a store logo
 
 CATEGORIES = [
@@ -478,36 +480,61 @@ def read_image(file_storage):
     if len(data) > MAX_IMAGE_BYTES:
         return None, None, "Image is larger than 5 MB. Please choose a smaller one."
     try:
+        detected = detect_image_type(data)
+        if detected is None:
+            return None, None, "Photo must be a valid JPG, PNG or WebP image."
         with warnings.catch_warnings():
             warnings.simplefilter("error", Image.DecompressionBombWarning)
             with Image.open(BytesIO(data)) as image:
                 fmt = (image.format or "").upper()
-                if fmt not in ("JPEG", "PNG", "WEBP") or getattr(image, "n_frames", 1) != 1:
+                ext = {"JPEG": "jpg", "PNG": "png", "WEBP": "webp"}.get(fmt)
+                if ext != detected:
+                    return None, None, "Photo must be a valid JPG, PNG or WebP image."
+                if getattr(image, "n_frames", 1) != 1:
                     return None, None, "Photo must be a non-animated JPG, PNG or WebP image."
+                width, height = image.size
+                if width < 1 or height < 1 or width * height > MAX_IMAGE_PIXELS:
+                    return None, None, "Image dimensions are too large. Please use an image under 40 megapixels."
                 image.verify()
             with Image.open(BytesIO(data)) as image:
-                image = ImageOps.exif_transpose(image)
-                image.thumbnail((1600, 1600), Image.Resampling.LANCZOS)
-                ext = {"JPEG": "jpg", "PNG": "png", "WEBP": "webp"}[fmt]
-                output = BytesIO()
-                if fmt == "JPEG":
-                    if image.mode not in ("RGB", "L"):
-                        image = image.convert("RGB")
-                    image.save(output, format="JPEG", quality=88, optimize=True)
-                elif fmt == "PNG":
-                    if image.mode not in ("RGB", "RGBA", "L", "LA", "P"):
-                        image = image.convert("RGBA")
-                    image.save(output, format="PNG", optimize=True)
-                else:
-                    if image.mode not in ("RGB", "RGBA"):
-                        image = image.convert("RGBA" if "A" in image.getbands() else "RGB")
-                    image.save(output, format="WEBP", quality=88, method=5)
-                optimized = output.getvalue()
+                oriented = ImageOps.exif_transpose(image)
+                try:
+                    oriented.thumbnail((MAX_IMAGE_DIMENSION, MAX_IMAGE_DIMENSION),
+                                       Image.Resampling.LANCZOS, reducing_gap=3.0)
+                    prepared = oriented
+                    if fmt == "JPEG" and prepared.mode not in ("RGB", "L"):
+                        prepared = oriented.convert("RGB")
+                    elif fmt == "PNG":
+                        has_transparency = "A" in prepared.getbands() or "transparency" in prepared.info
+                        if has_transparency and prepared.mode not in ("RGBA", "LA"):
+                            prepared = oriented.convert("RGBA")
+                        elif not has_transparency and prepared.mode not in ("RGB", "L"):
+                            prepared = oriented.convert("RGB")
+                    elif fmt == "WEBP" and prepared.mode not in ("RGB", "RGBA"):
+                        prepared = oriented.convert("RGBA" if "A" in oriented.getbands()
+                                                    or "transparency" in oriented.info else "RGB")
+                    try:
+                        with BytesIO() as output:
+                            if fmt == "JPEG":
+                                prepared.save(output, format="JPEG", quality=85, optimize=False)
+                            elif fmt == "PNG":
+                                # Low compression level is much faster than optimize=True; alpha is retained above.
+                                prepared.save(output, format="PNG", compress_level=3, optimize=False)
+                            else:
+                                prepared.save(output, format="WEBP", quality=85, method=4)
+                            output.seek(0)
+                            optimized = output.read()
+                    finally:
+                        if prepared is not oriented:
+                            prepared.close()
+                finally:
+                    if oriented is not image:
+                        oriented.close()
                 if len(optimized) > MAX_IMAGE_BYTES:
                     return None, None, "Optimized image is larger than 5 MB. Please choose a smaller one."
                 return optimized, ext, None
-    except (UnidentifiedImageError, OSError, ValueError, Image.DecompressionBombError,
-            Image.DecompressionBombWarning):
+    except Exception as exc:
+        app.logger.info("Rejected invalid image upload (%s).", type(exc).__name__)
         return None, None, "Photo must be a valid JPG, PNG or WebP image."
 
 
