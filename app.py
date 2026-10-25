@@ -301,6 +301,10 @@ def _mail_configured():
     return bool(os.environ.get("UMMAT_SMTP_HOST") and os.environ.get("UMMAT_EMAIL_FROM"))
 
 
+def _email_verification_required():
+    return os.environ.get("UMMAT_REQUIRE_EMAIL_VERIFICATION", "0").strip() == "1"
+
+
 def send_email(to_address, subject, body):
     """Send through configured SMTP, or log links in local development."""
     host = os.environ.get("UMMAT_SMTP_HOST")
@@ -917,7 +921,9 @@ def create_store():
     if request.method == "GET":
         return _render_create()
 
-    if (os.environ.get("UMMAT_ENV", "development").lower() == "production"
+    verification_required = _email_verification_required()
+    if (verification_required
+            and os.environ.get("UMMAT_ENV", "development").lower() == "production"
             and not _mail_configured()):
         return _render_create(503, form=request.form,
                               errors=["Account email is temporarily unavailable. Please try again later."])
@@ -953,7 +959,7 @@ def create_store():
         store["slug"] = unique_slug(store["business_name"], stores)
         store["owner_email"] = account_email
         store["password_hash"] = generate_password_hash(account_password)
-        store["email_verified"] = False
+        store["email_verified"] = not verification_required
         written = []
         try:
             written = write_images(staged, store["products"])
@@ -962,7 +968,8 @@ def create_store():
                 written.append(logo_path)
             stores.append(store)
             save_stores(stores)
-            token = _issue_token(_transaction.connection, account_email, "verify", 24 * 3600)
+            token = (_issue_token(_transaction.connection, account_email, "verify", 24 * 3600)
+                     if verification_required else None)
         except Exception:
             for path in written:                  # don't leave orphan images behind
                 if os.path.exists(path):
@@ -973,9 +980,10 @@ def create_store():
                                   rows=rows)
 
     session.clear()
-    link = _public_url("verify_email", token=token)
-    send_email(account_email, "Verify your UMMAT supplier account",
-               f"Confirm your email address to activate your account:\n\n{link}\n\nThis link expires in 24 hours.")
+    if token:
+        link = _public_url("verify_email", token=token)
+        send_email(account_email, "Verify your UMMAT supplier account",
+                   f"Confirm your email address to activate your account:\n\n{link}\n\nThis link expires in 24 hours.")
     return redirect(url_for("login", registered=1))
 
 
@@ -992,7 +1000,7 @@ def login():
         if (not store or not store.get("password_hash")
                 or not check_password_hash(store["password_hash"], password)):
             return render_template("login.html", error="Invalid email or password."), 401
-        if not store.get("email_verified", True):
+        if _email_verification_required() and not store.get("email_verified", True):
             return render_template("login.html", error="Please verify your email before logging in.",
                                    needs_verification=True), 403
         session.clear()
@@ -1028,6 +1036,8 @@ def verify_email(token):
 @app.route("/resend-verification", methods=["GET", "POST"])
 @rate_limited("resend-verification", 3, 3600)
 def resend_verification():
+    if not _email_verification_required():
+        return redirect(url_for("login"))
     message = None
     if request.method == "POST":
         if os.environ.get("UMMAT_ENV", "development").lower() == "production" and not _mail_configured():

@@ -17,7 +17,7 @@
     <span class="eyebrow">SUPPLIER ACCOUNT</span>
     <h1>Welcome back.</h1>
     <p>Log in to manage your UMMAT store and products.</p>
-    {% if request.args.get('registered') %}<div class="alert">Account created. Verify your email before logging in. Check your inbox or <a href="/resend-verification">request another link</a>.</div>{% endif %}
+    {% if request.args.get('registered') %}<div class="alert">Your account is ready. You can log in now.</div>{% endif %}
     {% if request.args.get('verified') %}<div class="alert">Email verified. You can now log in.</div>{% endif %}
     {% if request.args.get('password_reset') %}<div class="alert">Password updated. You can now log in.</div>{% endif %}
   </div>
